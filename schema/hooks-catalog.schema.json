@@ -1,0 +1,234 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "maxLength": 2048
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 500
+    },
+    "version": {
+      "type": "string",
+      "maxLength": 64
+    },
+    "homepage": {
+      "type": "string",
+      "maxLength": 2048,
+      "format": "uri"
+    },
+    "author": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "templates": {
+      "maxItems": 200,
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9-]{0,63}$"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 80
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "observe",
+              "gate"
+            ]
+          },
+          "events": {
+            "minItems": 1,
+            "maxItems": 16,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "thread.created",
+                "thread.active",
+                "thread.idle",
+                "thread.failed",
+                "thread.archived",
+                "thread.unarchived",
+                "thread.deleted",
+                "interaction.pending",
+                "message.queued",
+                "message.dispatched",
+                "message.cancelled",
+                "turn.failed",
+                "experimental_thread.events",
+                "experimental_terminal.input",
+                "message.dispatch"
+              ]
+            }
+          },
+          "params": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "key": {
+                  "type": "string",
+                  "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,31}$"
+                },
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 80
+                },
+                "description": {
+                  "type": "string",
+                  "maxLength": 300
+                },
+                "type": {
+                  "type": "string",
+                  "enum": [
+                    "string",
+                    "integer",
+                    "agent"
+                  ]
+                },
+                "default": {
+                  "type": "string",
+                  "maxLength": 4096
+                },
+                "required": {
+                  "type": "boolean"
+                },
+                "secret": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "key",
+                "label",
+                "type"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "command": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 8192
+          },
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "body": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 16384
+          },
+          "headers": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string",
+              "minLength": 1
+            },
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "match": {
+            "type": "object",
+            "properties": {
+              "projectId": {
+                "type": "string"
+              },
+              "providerId": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "timeoutMs": {
+            "type": "integer",
+            "minimum": 100,
+            "maximum": 600000
+          },
+          "onError": {
+            "type": "string",
+            "enum": [
+              "proceed",
+              "reject",
+              "wait"
+            ]
+          },
+          "notes": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "tags": {
+            "maxItems": 10,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9-]{0,31}$"
+            }
+          },
+          "author": {
+            "type": "string",
+            "maxLength": 80
+          },
+          "version": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "homepage": {
+            "type": "string",
+            "maxLength": 2048,
+            "format": "uri"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "summary",
+          "kind",
+          "events",
+          "params"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": [
+    "name",
+    "templates"
+  ],
+  "additionalProperties": false,
+  "$id": "https://raw.githubusercontent.com/MacHatter1/bb-hooks-marketplace/HEAD/schema/hooks-catalog.schema.json",
+  "title": "BB hooks catalog",
+  "description": "A catalog of hook templates for the BB Hooks plugin (bb hooks marketplace add owner/repo)."
+}

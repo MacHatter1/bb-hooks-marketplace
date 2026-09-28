@@ -1,0 +1,17 @@
+{
+  "name": "bb-hooks-marketplace",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Community catalog of hook templates for the BB Hooks plugin.",
+  "scripts": {
+    "validate": "node scripts/validate.mjs",
+    "readme": "node scripts/render-readme.mjs",
+    "check": "npm run validate && npm run readme",
+    "scores": "node scripts/scores.mjs"
+  },
+  "devDependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1"
+  }
+}

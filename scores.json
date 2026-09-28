@@ -1,0 +1,345 @@
+{
+  "$comment": "Maintainer review scores for hooks-catalog.json, out of 100. Rubric: .bb/skills/review-hook/references/scoring.md. After scoring, run npm run scores -- --stamp <id> and npm run readme.",
+  "templates": {
+    "pushover": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "793e876a6844f9ce"
+    },
+    "home-assistant": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "5d26d4f8e930a93b"
+    },
+    "pagerduty": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [
+        "{{error|500}} is always empty on turn.failed, whose payload has errorInfo {category, httpStatusCode, providerCode} and no error text.",
+        "severity is free text; anything but critical, error, warning or info makes PagerDuty reject the event."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "7de24b4d5b736350"
+    },
+    "teams": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [
+        "PLAUSIBLE: Teams Workflows webhook URLs expect an Adaptive Card; a plain {\"text\"} body can be accepted without posting."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "ee3cda88c1a4e9df"
+    },
+    "mattermost": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "39598e13c616456f"
+    },
+    "resend-email": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "7c80bfbba8d33c58"
+    },
+    "github-issue-comment": {
+      "security": 90,
+      "performance": 90,
+      "deductions": [
+        {
+          "area": "sec",
+          "level": "medium",
+          "points": 10,
+          "reason": "Any #n in a thread title picks the issue (\"Try approach #2\" posts the thread's output to issue 2)."
+        },
+        {
+          "area": "perf",
+          "level": "medium",
+          "points": 10,
+          "reason": "Comments on every turn (thread.idle), not once when the thread finishes as the summary says."
+        }
+      ],
+      "issues": [
+        "The greedy sed takes the last #n in the title, not the first as the description says."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "2d01f2420df20277"
+    },
+    "archive-when-done": {
+      "security": 75,
+      "performance": 100,
+      "deductions": [
+        {
+          "area": "sec",
+          "level": "high",
+          "points": 25,
+          "reason": "Archives every thread after every turn unless the user adds a title filter; the scope isn't enforced, and archiving cascades to child threads."
+        }
+      ],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "c659a94d25745b33"
+    },
+    "failover": {
+      "security": 100,
+      "performance": 90,
+      "deductions": [
+        {
+          "area": "perf",
+          "level": "medium",
+          "points": 10,
+          "reason": "BB's provider-retry already queues the same prompt for when the window opens, so the work runs twice in the same workspace."
+        }
+      ],
+      "issues": [
+        "bb thread history omits a thread's spawn prompt, so a thread that fails on its first turn gets no failover.",
+        "PLAUSIBLE: the spawned child's completion starts a parent turn; while the provider is still rate limited that turn fails again and spawns another child."
+      ],
+      "version": "1.1.0",
+      "reviewed": "2026-09-28",
+      "hash": "a908be85f92ecd7d"
+    },
+    "continue-on-capacity": {
+      "security": 100,
+      "performance": 65,
+      "deductions": [
+        {
+          "area": "perf",
+          "level": "high",
+          "points": 25,
+          "reason": "At most one continue per thread every two minutes, but no total cap: persistent capacity errors keep it going indefinitely."
+        },
+        {
+          "area": "perf",
+          "level": "medium",
+          "points": 10,
+          "reason": "Reads the whole thread log (bb thread log --all) on every failed turn, because the payload never contains the message it looks for; errorInfo.category == \"overloaded\" is already in the payload."
+        }
+      ],
+      "issues": [
+        "bb= is only set inside the if branch; when the payload check matches, \"$bb\" thread tell runs as \"\" and exits 127.",
+        "Sends a \"continue\" message instead of bb thread retry, which resumes the failed turn properly."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "7ae8caf8919376f6"
+    },
+    "block-secrets": {
+      "security": 75,
+      "performance": 100,
+      "deductions": [
+        {
+          "area": "sec",
+          "level": "high",
+          "points": 25,
+          "reason": "A credential guard that fails open: with no onError, a timeout or exhausted gate budget lets a matching message through. Set \"onError\": \"reject\"."
+        }
+      ],
+      "issues": [
+        "Blocks everyday kebab-case text: sk-[A-Za-z0-9_-]{20,} matches \"task-list-item-renderer-component\" (prefix \\b to fix).",
+        "Misses fine-grained GitHub tokens (github_pat_) and gho_, ghs_ and ghu_ tokens."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "db8e307b12b759b9"
+    },
+    "require-ticket": {
+      "security": 97,
+      "performance": 100,
+      "deductions": [
+        {
+          "area": "sec",
+          "level": "low",
+          "points": 3,
+          "reason": "The user-supplied pattern is passed to grep without -e, so a pattern starting with - is read as an option."
+        }
+      ],
+      "issues": [
+        "Also rejects the first message of threads started by agents, agent teams, playbooks and other hooks; exempt initiator != user.",
+        "Only sees the first 1000 characters of the message (BB_MESSAGE_TEXT)."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "228b82e84d2db78b"
+    },
+    "desktop-notify": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "c4f7ef3733b4c1b6"
+    },
+    "speak": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "020b6b82f8c317ac"
+    },
+    "ntfy": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "b4abd1c2bcc4536c"
+    },
+    "slack": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "bd6dedc2641b7700"
+    },
+    "discord": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "991602511a049512"
+    },
+    "telegram": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "2aeedda3e83897e6"
+    },
+    "webhook": {
+      "security": 75,
+      "performance": 100,
+      "deductions": [
+        {
+          "area": "sec",
+          "level": "high",
+          "points": 25,
+          "reason": "The endpoint URL isn't secret: true, but Zapier, n8n and similar webhook URLs are capability URLs, and it's stored in plain text in the hook."
+        }
+      ],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "7cd998054095c436"
+    },
+    "log-to-file": {
+      "security": 100,
+      "performance": 97,
+      "deductions": [
+        {
+          "area": "perf",
+          "level": "low",
+          "points": 3,
+          "reason": "The log file grows without limit or rotation."
+        }
+      ],
+      "issues": [
+        "A path like ~/bb-events.jsonl is single-quoted by the renderer, so ~ doesn't expand and the write fails."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "cac38510bcc44d61"
+    },
+    "follow-up": {
+      "security": 100,
+      "performance": 15,
+      "deductions": [
+        {
+          "area": "perf",
+          "level": "critical",
+          "points": 60,
+          "reason": "Loops: the spawned child's completion sends the parent a child-completed message, whose turn fires thread.idle and spawns another child. The BB_PARENT_THREAD_ID guard only stops the child."
+        },
+        {
+          "area": "perf",
+          "level": "high",
+          "points": 25,
+          "reason": "Spawns an agent thread after every turn of every top-level thread unless the user adds a filter."
+        }
+      ],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "7506ac7fd198c8b3"
+    },
+    "review": {
+      "security": 100,
+      "performance": 15,
+      "deductions": [
+        {
+          "area": "perf",
+          "level": "critical",
+          "points": 60,
+          "reason": "Loops: the reviewer's completion sends the parent a child-completed message, whose turn fires thread.idle and spawns another reviewer. The BB_PARENT_THREAD_ID guard only stops the child."
+        },
+        {
+          "area": "perf",
+          "level": "high",
+          "points": 25,
+          "reason": "Spawns a reviewer thread after every turn of every top-level thread unless the user adds a filter."
+        }
+      ],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "8e77d0ca99d25e99"
+    },
+    "block-pattern": {
+      "security": 75,
+      "performance": 100,
+      "deductions": [
+        {
+          "area": "sec",
+          "level": "high",
+          "points": 25,
+          "reason": "A guardrail that fails open: with no onError, a timeout or exhausted gate budget lets a matching message through. Set \"onError\": \"reject\"."
+        }
+      ],
+      "issues": [],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "6b10a297513f8147"
+    },
+    "office-hours": {
+      "security": 100,
+      "performance": 100,
+      "deductions": [],
+      "issues": [
+        "A window that crosses midnight (start 22, end 6) never opens, so matching messages are held forever."
+      ],
+      "version": "1.0.0",
+      "reviewed": "2026-09-28",
+      "hash": "2aba6309844e3ee5"
+    }
+  }
+}

@@ -1,0 +1,51 @@
+name: Propose a hook template
+description: Suggest a new hook for the catalog (or open a pull request directly).
+title: "[template] "
+labels: [template-request]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Name
+      placeholder: e.g. Linear comment
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What should it do?
+      description: One or two sentences, from the user's point of view.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - reacts to an event (observe)
+        - decides whether a message may be sent (gate)
+    validations:
+      required: true
+  - type: input
+    id: events
+    attributes:
+      label: Events
+      placeholder: thread.idle, thread.failed, interaction.pending, message.dispatch …
+  - type: input
+    id: service
+    attributes:
+      label: Target service and API docs
+      placeholder: https://…
+  - type: textarea
+    id: draft
+    attributes:
+      label: Draft
+      description: A url + body, or a command. Put credentials in secret params, never inline.
+      render: json
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checks
+      options:
+        - label: No credential is written into command, url, headers, or body.
+        - label: Any external tool it needs (jq, gh, osascript …) is named.

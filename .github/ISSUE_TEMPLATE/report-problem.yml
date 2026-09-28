@@ -1,0 +1,24 @@
+name: Report a problem with a template
+description: A template fails, misbehaves, or its listing is wrong.
+title: "[bug] "
+labels: [bug]
+body:
+  - type: input
+    id: template
+    attributes:
+      label: Template
+      placeholder: community/pagerduty
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: Paste the relevant line from `bb hooks history` or the Test dialog. Redact secrets.
+    validations:
+      required: true
+  - type: input
+    id: bb
+    attributes:
+      label: BB version
+      placeholder: bb --version

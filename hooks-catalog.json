@@ -1,0 +1,789 @@
+{
+  "$schema": "./schema/hooks-catalog.schema.json",
+  "name": "community",
+  "description": "Community hook templates for the BB Hooks plugin: notifications, integrations, agent automation, and gate policies.",
+  "version": "1.1.0",
+  "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+  "author": "MacHatter1",
+  "templates": [
+    {
+      "id": "pushover",
+      "name": "Pushover notification",
+      "summary": "Push to your phone through Pushover.",
+      "description": "Sends a Pushover push with the thread title and the last reply or error. Create an application at pushover.net to get an API token; your user key is on the dashboard. Both are stored encrypted.",
+      "kind": "observe",
+      "events": [
+        "interaction.pending",
+        "thread.failed"
+      ],
+      "tags": [
+        "notifications",
+        "phone",
+        "push"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "token",
+          "label": "Application token",
+          "type": "string",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "user",
+          "label": "User key",
+          "type": "string",
+          "required": true,
+          "secret": true
+        }
+      ],
+      "url": "https://api.pushover.net/1/messages.json",
+      "body": "{\"token\":\"{{token}}\",\"user\":\"{{user}}\",\"title\":\"BB {{event}}\",\"message\":\"{{thread.title}}\\n{{lastAssistantText|300}}{{error|300}}\"}",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "home-assistant",
+      "name": "Home Assistant webhook",
+      "summary": "Trigger a Home Assistant automation, for example turn a lamp red when an agent needs you.",
+      "description": "Posts a small JSON payload to a Home Assistant webhook trigger. Create an automation with a Webhook trigger, copy its URL, and use the event field in your automation's conditions (interaction.pending, thread.idle, \u2026).",
+      "kind": "observe",
+      "events": [
+        "interaction.pending",
+        "thread.idle"
+      ],
+      "tags": [
+        "integration",
+        "home-automation"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "webhookUrl",
+          "label": "Webhook URL",
+          "description": "https://<your-ha>/api/webhook/<id>",
+          "type": "string",
+          "required": true,
+          "secret": true
+        }
+      ],
+      "url": "{{webhookUrl}}",
+      "body": "{\"event\":\"{{event}}\",\"thread\":\"{{thread.title}}\",\"threadId\":\"{{thread.id}}\",\"status\":\"{{thread.status}}\"}",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "pagerduty",
+      "name": "PagerDuty alert",
+      "summary": "Trigger a PagerDuty incident when a thread or turn fails.",
+      "description": "Uses the PagerDuty Events API v2 with an Events integration routing key. Incidents are deduplicated per thread. Severity is one of critical, error, warning, info.",
+      "kind": "observe",
+      "events": [
+        "thread.failed",
+        "turn.failed"
+      ],
+      "tags": [
+        "notifications",
+        "on-call",
+        "pagerduty"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "routingKey",
+          "label": "Integration routing key",
+          "type": "string",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "severity",
+          "label": "Severity",
+          "description": "critical, error, warning or info",
+          "type": "string",
+          "default": "warning"
+        }
+      ],
+      "url": "https://events.pagerduty.com/v2/enqueue",
+      "body": "{\"routing_key\":\"{{routingKey}}\",\"event_action\":\"trigger\",\"dedup_key\":\"bb-{{thread.id}}\",\"payload\":{\"summary\":\"BB {{event}}: {{thread.title}}\",\"severity\":\"{{severity}}\",\"source\":\"bb\",\"custom_details\":{\"threadId\":\"{{thread.id}}\",\"error\":\"{{error|500}}\"}}}",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "teams",
+      "name": "Microsoft Teams message",
+      "summary": "Post to a Teams channel through an incoming webhook or workflow URL.",
+      "kind": "observe",
+      "events": [
+        "thread.idle",
+        "thread.failed",
+        "interaction.pending"
+      ],
+      "tags": [
+        "notifications",
+        "chat",
+        "teams"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "webhookUrl",
+          "label": "Incoming webhook URL",
+          "type": "string",
+          "required": true,
+          "secret": true
+        }
+      ],
+      "url": "{{webhookUrl}}",
+      "body": "{\"text\":\"BB {{event}} \u2014 {{thread.title}}\\n{{lastAssistantText|500}}{{error|500}}\"}",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "mattermost",
+      "name": "Mattermost message",
+      "summary": "Post to a Mattermost channel through an incoming webhook.",
+      "kind": "observe",
+      "events": [
+        "thread.idle",
+        "thread.failed",
+        "interaction.pending"
+      ],
+      "tags": [
+        "notifications",
+        "chat",
+        "mattermost"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "webhookUrl",
+          "label": "Incoming webhook URL",
+          "type": "string",
+          "required": true,
+          "secret": true
+        }
+      ],
+      "url": "{{webhookUrl}}",
+      "body": "{\"text\":\"BB {{event}} \u2014 {{thread.title}}\\n{{lastAssistantText|500}}{{error|500}}\"}",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "resend-email",
+      "name": "Email via Resend",
+      "summary": "Email yourself the result or error of a thread through the Resend API.",
+      "description": "Sends a plain-text email with the last assistant reply or the error. Needs a Resend API key and a verified sender. The key is sent as a bearer token and stored encrypted.",
+      "kind": "observe",
+      "events": [
+        "thread.idle",
+        "thread.failed"
+      ],
+      "tags": [
+        "notifications",
+        "email"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "apiKey",
+          "label": "Resend API key",
+          "type": "string",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "from",
+          "label": "From address",
+          "description": "A sender on a domain verified in Resend.",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "to",
+          "label": "To address",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "url": "https://api.resend.com/emails",
+      "headers": {
+        "authorization": "Bearer {{apiKey}}"
+      },
+      "body": "{\"from\":\"{{from}}\",\"to\":[\"{{to}}\"],\"subject\":\"BB {{event}}: {{thread.title}}\",\"text\":\"{{lastAssistantText|4000}}{{error|4000}}\\n\\nThread {{thread.id}}\"}",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "github-issue-comment",
+      "name": "Comment on the linked GitHub issue",
+      "summary": "When a thread whose title mentions #123 finishes, post its output as a comment on issue 123.",
+      "description": "Extracts the first #number from the thread title and posts the thread's final output as an issue comment with the gh CLI. Threads without a #number are ignored.",
+      "kind": "observe",
+      "events": [
+        "thread.idle"
+      ],
+      "tags": [
+        "integration",
+        "github",
+        "automation"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "repo",
+          "label": "Repository (owner/name)",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "command": "repo={{repo}}\nn=$(printf '%s' \"$BB_THREAD_TITLE\" | sed -n 's/.*#\\([0-9][0-9]*\\).*/\\1/p' | head -n 1)\n[ -z \"$n\" ] && exit 0\nbody=$(\"${BB_CLI:-bb}\" thread output \"$BB_THREAD_ID\" 2>/dev/null | head -c 60000)\n[ -z \"$body\" ] && exit 0\nprintf '%s\\n\\n_Posted by BB hooks from thread %s._\\n' \"$body\" \"$BB_THREAD_ID\" | gh issue comment \"$n\" -R \"$repo\" --body-file -",
+      "timeoutMs": 60000,
+      "notes": "Needs the gh CLI authenticated on the machine running the BB server.",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "archive-when-done",
+      "name": "Archive finished threads",
+      "summary": "Archive a thread as soon as it goes idle. Scope it with a title filter so only throwaway threads are archived.",
+      "kind": "observe",
+      "events": [
+        "thread.idle"
+      ],
+      "tags": [
+        "automation",
+        "housekeeping"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [],
+      "command": "\"${BB_CLI:-bb}\" thread archive \"$BB_THREAD_ID\"",
+      "notes": "Combine with --title '^chore' or a project filter. Archived threads can be unarchived from the sidebar.",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "failover",
+      "name": "Provider failover on rate limits",
+      "summary": "When a turn fails because the provider is rate limited, re-run the same prompt on another provider.",
+      "description": "Listens to turn.failed, checks that the failure is a rate limit, fetches the thread's latest prompt, and spawns a new thread on the agent you choose in the same workspace, parented to the failed thread. Only top-level threads trigger it, so it never loops.",
+      "kind": "observe",
+      "events": [
+        "turn.failed"
+      ],
+      "tags": [
+        "automation",
+        "agents",
+        "resilience"
+      ],
+      "author": "MacHatter1",
+      "version": "1.1.0",
+      "params": [
+        {
+          "key": "agent",
+          "label": "Fallback agent",
+          "description": "Which provider (and model) re-runs the prompt when the original is rate limited.",
+          "type": "agent",
+          "default": "codex"
+        }
+      ],
+      "command": "mode={{agent.mode}}; provider={{agent.providerId}}; model={{agent.model}}; reasoning={{agent.reasoningLevel}}; tier={{agent.serviceTier}}\nbb=\"${BB_CLI:-bb}\"\ncommand -v jq >/dev/null 2>&1 || { echo \"failover needs jq on the BB server\" >&2; exit 1; }\ninput=$(cat)\ncategory=$(printf '%s' \"$input\" | jq -r '.errorInfo.category // empty')\n[ \"$category\" = \"rate-limit\" ] || exit 0\n# Never chain from a thread this hook spawned.\n[ -n \"$BB_PARENT_THREAD_ID\" ] && exit 0\nprompt=$(\"$bb\" thread history \"$BB_THREAD_ID\" --limit 1 --json | jq -r '.[0].input[]? | select(.type == \"text\") | .text' | head -c 20000)\n[ -z \"$prompt\" ] && exit 0\nset -- --project \"$BB_PROJECT_ID\" --parent-thread \"$BB_THREAD_ID\"\n# A fallback that inherits would hit the same limit; \"inherit\" here still re-runs on the same provider by request.\nif [ \"$mode\" = \"inherit\" ]; then provider=\"$BB_PROVIDER_ID\"; model=\"$BB_MODEL\"; reasoning=\"$BB_REASONING_LEVEL\"; tier=\"$BB_SERVICE_TIER\"; fi\n[ -n \"$provider\" ] && set -- \"$@\" --provider \"$provider\"\n[ -n \"$model\" ] && set -- \"$@\" --model \"$model\"\n[ -n \"$reasoning\" ] && [ \"$reasoning\" != \"none\" ] && set -- \"$@\" --reasoning-level \"$reasoning\"\n[ -n \"$tier\" ] && set -- \"$@\" --service-tier \"$tier\"\n[ -n \"$BB_ENVIRONMENT_ID\" ] && set -- \"$@\" --environment \"$BB_ENVIRONMENT_ID\"\n\"$bb\" thread spawn \"$@\" --prompt \"$prompt\"",
+      "timeoutMs": 120000,
+      "notes": "Needs jq and the bb CLI on the machine running the BB server.",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "continue-on-capacity",
+      "name": "Continue after capacity errors",
+      "summary": "Send a continue prompt when a turn fails with a model-capacity error.",
+      "description": "Checks the failed-turn payload, then the thread's latest provider error. Sends at most one follow-up prompt per thread every two minutes to prevent retry loops.",
+      "kind": "observe",
+      "events": [
+        "turn.failed"
+      ],
+      "tags": [
+        "automation",
+        "agents",
+        "resilience"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [],
+      "command": "needle='Error Code null: The model is currently at capacity due to high demand.'\nif ! jq -e --arg needle \"$needle\" 'any(.. | strings; contains($needle))' >/dev/null; then\n  bb=\"${BB_CLI:-bb}\"\n  \"$bb\" thread log \"$BB_THREAD_ID\" --json --all 2>/dev/null |\n    jq -e --arg needle \"$needle\" '[.[] | select(.type == \"provider/error\")] | last // {} | any(.. | strings; contains($needle))' >/dev/null || exit 0\nfi\nstamp=\"${TMPDIR:-/tmp}/bb-capacity-continue-${BB_THREAD_ID}\"\nnow=$(date +%s)\nlast=$(cat \"$stamp\" 2>/dev/null || echo 0)\nif ! [ \"$last\" -ge 0 ] 2>/dev/null; then last=0; fi\nif [ \"$((now - last))\" -lt 120 ]; then exit 0; fi\nprintf \"%s\\n\" \"$now\" > \"$stamp\"\n\"$bb\" thread tell \"$BB_THREAD_ID\" \"Continue from where you left off. The previous attempt hit temporary model capacity; do not repeat completed work.\"",
+      "timeoutMs": 30000,
+      "notes": "Needs jq and the bb CLI on the machine running the BB server. Checks the latest provider/error log entry when the event omits details.",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "block-secrets",
+      "name": "Block messages that contain credentials",
+      "summary": "Reject any message that looks like it contains an API key, token, or private key.",
+      "description": "A gate hook with a pattern for common credential shapes: OpenAI, GitHub, AWS, Slack tokens and PEM private keys. Adjust the pattern to your own key formats.",
+      "kind": "gate",
+      "events": [
+        "message.dispatch"
+      ],
+      "tags": [
+        "gate",
+        "policy",
+        "safety",
+        "secrets"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "pattern",
+          "label": "Credential pattern",
+          "type": "string",
+          "default": "(sk-[A-Za-z0-9_-]{20,}|ghp_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{10,}|-----BEGIN [A-Z ]*PRIVATE KEY-----)"
+        },
+        {
+          "key": "message",
+          "label": "Reason shown to the sender",
+          "type": "string",
+          "default": "This message looks like it contains a credential. Remove it before sending."
+        }
+      ],
+      "command": "message={{message}}; echo \"$message\" >&2; exit 2",
+      "match": {
+        "text": "{{pattern}}"
+      },
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "require-ticket",
+      "name": "Require a ticket reference",
+      "summary": "Reject a thread's first message unless it references a ticket like ENG-123.",
+      "description": "Checks only the first message of a thread (later messages pass). The pattern is an extended regular expression tested with grep -E on the BB server.",
+      "kind": "gate",
+      "events": [
+        "message.dispatch"
+      ],
+      "tags": [
+        "gate",
+        "policy",
+        "process"
+      ],
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "params": [
+        {
+          "key": "pattern",
+          "label": "Ticket pattern (grep -E)",
+          "type": "string",
+          "default": "[[:upper:]]{2,}-[[:digit:]]+"
+        },
+        {
+          "key": "message",
+          "label": "Reason shown to the sender",
+          "type": "string",
+          "default": "Start the thread with a ticket reference like ENG-123."
+        }
+      ],
+      "command": "pattern={{pattern}}; message={{message}}\n# Only the first message of a thread (status pending) needs a reference.\n[ \"$BB_THREAD_STATUS\" = \"pending\" ] || exit 0\nprintf '%s' \"$BB_MESSAGE_TEXT\" | grep -Eq \"$pattern\" && exit 0\necho \"$message\" >&2\nexit 2",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
+    },
+    {
+      "id": "desktop-notify",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "notifications",
+        "desktop"
+      ],
+      "description": "A native notification the moment an agent stops for you, finishes, or fails. Works on macOS through osascript and on Linux through notify-send. Pick a sound on macOS with --set sound=Glass.",
+      "name": "Desktop notification",
+      "summary": "Show a desktop notification when an agent needs you, finishes, or fails.",
+      "kind": "observe",
+      "events": [
+        "interaction.pending",
+        "thread.idle",
+        "thread.failed"
+      ],
+      "params": [
+        {
+          "key": "title",
+          "label": "Notification title",
+          "type": "string",
+          "default": "BB"
+        },
+        {
+          "key": "sound",
+          "label": "macOS sound name",
+          "description": "For example Glass or Ping; empty for silent.",
+          "type": "string",
+          "default": ""
+        }
+      ],
+      "command": "title={{title}}; sound={{sound}}\ncase \"$BB_HOOK_EVENT\" in\n  interaction.pending) msg=\"Needs you: $BB_THREAD_TITLE\" ;;\n  thread.idle) msg=\"Finished: $BB_THREAD_TITLE\" ;;\n  thread.failed) msg=\"Failed: $BB_THREAD_TITLE\" ;;\n  turn.failed) msg=\"Turn failed: $BB_THREAD_TITLE\" ;;\n  *) msg=\"$BB_HOOK_EVENT: $BB_THREAD_TITLE\" ;;\nesac\nesc() { printf '%s' \"$1\" | tr '\\n' ' ' | sed 's/[\"\\\\]/\\\\&/g'; }\nif command -v osascript >/dev/null 2>&1; then\n  script=\"display notification \\\"$(esc \"$msg\")\\\" with title \\\"$(esc \"$title\")\\\"\"\n  [ -n \"$sound\" ] && script=\"$script sound name \\\"$(esc \"$sound\")\\\"\"\n  osascript -e \"$script\"\nelif command -v notify-send >/dev/null 2>&1; then\n  notify-send \"$title\" \"$msg\"\nelse\n  echo \"no notifier found (needs osascript or notify-send)\" >&2; exit 1\nfi",
+      "notes": "Needs osascript (macOS) or notify-send (Linux) on the machine running the BB server."
+    },
+    {
+      "id": "speak",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "notifications",
+        "desktop",
+        "voice"
+      ],
+      "name": "Speak it",
+      "summary": "Read the event aloud with the system voice.",
+      "kind": "observe",
+      "events": [
+        "interaction.pending",
+        "thread.idle"
+      ],
+      "params": [
+        {
+          "key": "voice",
+          "label": "Voice name (macOS)",
+          "type": "string",
+          "default": ""
+        }
+      ],
+      "command": "voice={{voice}}\ncase \"$BB_HOOK_EVENT\" in\n  interaction.pending) msg=\"An agent needs you on $BB_THREAD_TITLE\" ;;\n  thread.idle) msg=\"Agent finished $BB_THREAD_TITLE\" ;;\n  thread.failed) msg=\"Agent failed on $BB_THREAD_TITLE\" ;;\n  *) msg=\"$BB_HOOK_EVENT on $BB_THREAD_TITLE\" ;;\nesac\nif command -v say >/dev/null 2>&1; then\n  if [ -n \"$voice\" ]; then say -v \"$voice\" \"$msg\"; else say \"$msg\"; fi\nelif command -v spd-say >/dev/null 2>&1; then spd-say \"$msg\"\nelif command -v espeak >/dev/null 2>&1; then espeak \"$msg\"\nelse echo \"no speech tool found (needs say, spd-say or espeak)\" >&2; exit 1; fi",
+      "notes": "Needs say (macOS) or spd-say or espeak (Linux) on the machine running the BB server."
+    },
+    {
+      "id": "ntfy",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "notifications",
+        "phone",
+        "push"
+      ],
+      "description": "Push notifications to your phone with the free ntfy app and no account: install ntfy, subscribe to a topic, and give the same topic here. Use a long random topic name, since anyone who guesses it can read your notifications.",
+      "name": "Phone push via ntfy",
+      "summary": "Push to your phone through ntfy.sh (no account needed: subscribe to a topic in the ntfy app).",
+      "kind": "observe",
+      "events": [
+        "interaction.pending",
+        "thread.failed"
+      ],
+      "params": [
+        {
+          "key": "topic",
+          "label": "ntfy topic",
+          "description": "Pick something unguessable; anyone who knows it can read it.",
+          "type": "string",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "server",
+          "label": "ntfy server",
+          "type": "string",
+          "default": "https://ntfy.sh"
+        }
+      ],
+      "url": "{{server}}",
+      "body": "{\"topic\":\"{{topic}}\",\"title\":\"BB {{event}}\",\"message\":\"{{thread.title}}\\n{{lastAssistantText|300}}{{error|300}}\",\"tags\":[\"robot\"]}"
+    },
+    {
+      "id": "slack",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "notifications",
+        "chat",
+        "slack"
+      ],
+      "description": "Posts a short message with the thread title and the last reply or error to a Slack channel. Create an Incoming Webhook in your Slack app settings and paste its URL; it is stored encrypted.",
+      "name": "Slack message",
+      "summary": "Post to a Slack channel through an incoming webhook.",
+      "kind": "observe",
+      "events": [
+        "thread.idle",
+        "thread.failed",
+        "interaction.pending"
+      ],
+      "params": [
+        {
+          "key": "webhookUrl",
+          "label": "Incoming webhook URL",
+          "type": "string",
+          "required": true,
+          "secret": true
+        }
+      ],
+      "url": "{{webhookUrl}}",
+      "body": "{\"text\":\"BB {{event}} \u2014 {{thread.title}}\\n{{lastAssistantText|500}}{{error|500}}\"}",
+      "notes": "Create the webhook at api.slack.com/apps \u2192 Incoming Webhooks. The URL is stored encrypted (bb hooks secrets)."
+    },
+    {
+      "id": "discord",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "notifications",
+        "chat",
+        "discord"
+      ],
+      "name": "Discord message",
+      "summary": "Post to a Discord channel through a channel webhook.",
+      "kind": "observe",
+      "events": [
+        "thread.idle",
+        "thread.failed",
+        "interaction.pending"
+      ],
+      "params": [
+        {
+          "key": "webhookUrl",
+          "label": "Channel webhook URL",
+          "type": "string",
+          "required": true,
+          "secret": true
+        }
+      ],
+      "url": "{{webhookUrl}}",
+      "body": "{\"content\":\"BB {{event}} \u2014 {{thread.title}}\\n{{lastAssistantText|500}}{{error|500}}\"}"
+    },
+    {
+      "id": "telegram",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "notifications",
+        "chat",
+        "telegram",
+        "phone"
+      ],
+      "name": "Telegram message",
+      "summary": "Send a message from a Telegram bot to a chat.",
+      "kind": "observe",
+      "events": [
+        "thread.idle",
+        "thread.failed",
+        "interaction.pending"
+      ],
+      "params": [
+        {
+          "key": "botToken",
+          "label": "Bot token",
+          "description": "From @BotFather.",
+          "type": "string",
+          "required": true,
+          "secret": true
+        },
+        {
+          "key": "chatId",
+          "label": "Chat id",
+          "description": "Your user or group id; message the bot first.",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "url": "https://api.telegram.org/bot{{botToken}}/sendMessage",
+      "body": "{\"chat_id\":\"{{chatId}}\",\"text\":\"BB {{event}} \u2014 {{thread.title}}\\n{{lastAssistantText|500}}{{error|500}}\"}",
+      "notes": "The bot token is stored encrypted (bb hooks secrets)."
+    },
+    {
+      "id": "webhook",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "integration",
+        "webhook"
+      ],
+      "description": "Sends the complete event JSON to any HTTP endpoint: Zapier, n8n, Make, a serverless function, or your own service. Set the plugin's webhook signing secret to verify requests with x-bb-hooks-signature.",
+      "name": "Generic webhook",
+      "summary": "POST the raw event JSON to any URL (signed when the webhook secret is set).",
+      "kind": "observe",
+      "events": [
+        "thread.idle"
+      ],
+      "params": [
+        {
+          "key": "url",
+          "label": "Endpoint URL",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "url": "{{url}}"
+    },
+    {
+      "id": "log-to-file",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "audit",
+        "logging"
+      ],
+      "name": "Log to file",
+      "summary": "Append every event as one JSON line to a file on the server.",
+      "kind": "observe",
+      "events": [
+        "thread.created",
+        "thread.idle",
+        "thread.failed",
+        "thread.archived"
+      ],
+      "params": [
+        {
+          "key": "path",
+          "label": "File path (on the BB server)",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "command": "cat >> {{path}}"
+    },
+    {
+      "id": "follow-up",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "automation",
+        "agents",
+        "chaining"
+      ],
+      "description": "Chains agents: when a thread finishes, a new thread starts in the same workspace with your prompt plus the finished thread's output. Only top-level threads trigger it, so the chain stops after one hop. Scope it with --title or --project.",
+      "name": "Spawn a follow-up thread",
+      "summary": "When a thread finishes, start a new thread in the same workspace with your prompt plus the finished thread's output.",
+      "kind": "observe",
+      "events": [
+        "thread.idle"
+      ],
+      "params": [
+        {
+          "key": "prompt",
+          "label": "Prompt for the follow-up",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "agent",
+          "label": "Who runs it",
+          "description": "Same provider and model as the finished thread, or pick one.",
+          "type": "agent",
+          "default": "inherit"
+        }
+      ],
+      "command": "prompt={{prompt}}\nmode={{agent.mode}}; provider={{agent.providerId}}; model={{agent.model}}; reasoning={{agent.reasoningLevel}}; tier={{agent.serviceTier}}\nbb=\"${BB_CLI:-bb}\"\n# Only top-level threads chain, so a follow-up never triggers another follow-up.\n[ -n \"$BB_PARENT_THREAD_ID\" ] && exit 0\noutput=$(\"$bb\" thread output \"$BB_THREAD_ID\" 2>/dev/null | head -c 20000)\nset -- --project \"$BB_PROJECT_ID\" --parent-thread \"$BB_THREAD_ID\"\n[ -n \"$BB_ENVIRONMENT_ID\" ] && set -- \"$@\" --environment \"$BB_ENVIRONMENT_ID\"\n# \"inherit\" reuses the triggering thread's provider, model and reasoning (BB_MODEL etc. come from the plugin).\nif [ \"$mode\" = \"inherit\" ]; then provider=\"$BB_PROVIDER_ID\"; model=\"$BB_MODEL\"; reasoning=\"$BB_REASONING_LEVEL\"; tier=\"$BB_SERVICE_TIER\"; fi\n[ -n \"$provider\" ] && set -- \"$@\" --provider \"$provider\"\n[ -n \"$model\" ] && set -- \"$@\" --model \"$model\"\n[ -n \"$reasoning\" ] && [ \"$reasoning\" != \"none\" ] && set -- \"$@\" --reasoning-level \"$reasoning\"\n[ -n \"$tier\" ] && set -- \"$@\" --service-tier \"$tier\"\n\"$bb\" thread spawn \"$@\" --prompt \"$(printf '%s\\n\\n---\\nOutput of thread %s:\\n%s' \"$prompt\" \"$BB_THREAD_ID\" \"$output\")\"",
+      "timeoutMs": 120000,
+      "notes": "Uses the bb CLI from the server (BB_CLI). Only top-level threads trigger it, so chains stop after one hop. Add --title or --project filters to scope it."
+    },
+    {
+      "id": "review",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "automation",
+        "agents",
+        "code-review"
+      ],
+      "description": "A second opinion on every finished thread: a reviewer thread inspects the diff, runs the tests, and answers APPROVE or REQUEST CHANGES. Run it on a different provider than the author for real independence.",
+      "name": "Automatic code review",
+      "summary": "When a thread finishes, spawn a reviewer thread that inspects its work and answers APPROVE or REQUEST CHANGES.",
+      "kind": "observe",
+      "events": [
+        "thread.idle"
+      ],
+      "params": [
+        {
+          "key": "prompt",
+          "label": "Reviewer prompt",
+          "type": "string",
+          "default": "You are a strict code reviewer. Inspect the changes made by the previous thread in this workspace (git diff and git log), run the tests, and reply with APPROVE or REQUEST CHANGES followed by specific, actionable findings. Do not make changes."
+        },
+        {
+          "key": "agent",
+          "label": "Who reviews",
+          "description": "Pick a different provider than the author for a real second opinion, or inherit the author's.",
+          "type": "agent",
+          "default": "inherit"
+        }
+      ],
+      "command": "prompt={{prompt}}\nmode={{agent.mode}}; provider={{agent.providerId}}; model={{agent.model}}; reasoning={{agent.reasoningLevel}}; tier={{agent.serviceTier}}\nbb=\"${BB_CLI:-bb}\"\n# Only top-level threads chain, so a follow-up never triggers another follow-up.\n[ -n \"$BB_PARENT_THREAD_ID\" ] && exit 0\noutput=$(\"$bb\" thread output \"$BB_THREAD_ID\" 2>/dev/null | head -c 20000)\nset -- --project \"$BB_PROJECT_ID\" --parent-thread \"$BB_THREAD_ID\"\n[ -n \"$BB_ENVIRONMENT_ID\" ] && set -- \"$@\" --environment \"$BB_ENVIRONMENT_ID\"\n# \"inherit\" reuses the triggering thread's provider, model and reasoning (BB_MODEL etc. come from the plugin).\nif [ \"$mode\" = \"inherit\" ]; then provider=\"$BB_PROVIDER_ID\"; model=\"$BB_MODEL\"; reasoning=\"$BB_REASONING_LEVEL\"; tier=\"$BB_SERVICE_TIER\"; fi\n[ -n \"$provider\" ] && set -- \"$@\" --provider \"$provider\"\n[ -n \"$model\" ] && set -- \"$@\" --model \"$model\"\n[ -n \"$reasoning\" ] && [ \"$reasoning\" != \"none\" ] && set -- \"$@\" --reasoning-level \"$reasoning\"\n[ -n \"$tier\" ] && set -- \"$@\" --service-tier \"$tier\"\n\"$bb\" thread spawn \"$@\" --prompt \"$(printf '%s\\n\\n---\\nOutput of thread %s:\\n%s' \"$prompt\" \"$BB_THREAD_ID\" \"$output\")\"",
+      "timeoutMs": 120000,
+      "notes": "Same mechanics as follow-up. Scope it with --title '^feat' or --project so not every thread gets reviewed."
+    },
+    {
+      "id": "block-pattern",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "gate",
+        "policy",
+        "safety"
+      ],
+      "description": "A guardrail on outgoing messages: anything matching the pattern is rejected before it reaches the agent, and the sender sees your reason. Send now on a queued message can override it.",
+      "name": "Block messages matching a pattern",
+      "summary": "Reject any message whose text matches a regular expression, showing your reason.",
+      "kind": "gate",
+      "events": [
+        "message.dispatch"
+      ],
+      "params": [
+        {
+          "key": "pattern",
+          "label": "Regular expression",
+          "description": "Tested against the message text, for example \\bprod(uction)?\\b.",
+          "type": "string",
+          "required": true
+        },
+        {
+          "key": "message",
+          "label": "Reason shown to the sender",
+          "type": "string",
+          "default": "Blocked by the block-pattern hook."
+        }
+      ],
+      "command": "message={{message}}; echo \"$message\" >&2; exit 2",
+      "match": {
+        "text": "{{pattern}}"
+      }
+    },
+    {
+      "id": "office-hours",
+      "author": "MacHatter1",
+      "version": "1.0.0",
+      "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
+      "tags": [
+        "gate",
+        "policy",
+        "scheduling"
+      ],
+      "description": "Holds messages sent outside the window and sends them automatically when it opens, using the server's local time. Combine with --text '#overnight' to queue only tagged work for the night.",
+      "name": "Office hours",
+      "summary": "Hold messages sent outside a daily window until it opens (server local time).",
+      "kind": "gate",
+      "events": [
+        "message.dispatch"
+      ],
+      "params": [
+        {
+          "key": "start",
+          "label": "Opening hour (0-23)",
+          "type": "integer",
+          "default": "9"
+        },
+        {
+          "key": "end",
+          "label": "Closing hour (1-24)",
+          "type": "integer",
+          "default": "18"
+        }
+      ],
+      "command": "start={{start}}; end={{end}}\nnow=$(date +%s); h=$(date +%H); m=$(date +%M); s=$(date +%S)\nh=${h#0}; m=${m#0}; s=${s#0}\ntoday=$(( h * 3600 + m * 60 + s ))\nopen=$(( start * 3600 )); close=$(( end * 3600 ))\nif [ \"$today\" -ge \"$open\" ] && [ \"$today\" -lt \"$close\" ]; then exit 0; fi\nif [ \"$today\" -lt \"$open\" ]; then wait=$(( open - today )); else wait=$(( 86400 - today + open )); fi\nprintf '{\"action\":\"wait\",\"reason\":\"Outside office hours (%02d:00-%02d:00)\",\"sendAt\":%d}\\n' \"$start\" \"$end\" $(( (now + wait) * 1000 ))",
+      "notes": "Combine with --text '#overnight' to hold only tagged messages. Send now on the queued card overrides it."
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Security concern about a template
+    url: https://github.com/MacHatter1/bb-hooks-marketplace/blob/main/SECURITY.md
+    about: How to report a template that does something it should not, privately.
