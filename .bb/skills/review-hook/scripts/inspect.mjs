@@ -27,7 +27,7 @@ const RISKS = [
   [/(^|[\s;|(])(env|printenv)\s*($|[|;>)])/m, "WARN", "sec", "dumps the environment (the server's, including its tokens)"],
 ];
 // Files a template PR has no reason to touch; changes here can weaken the review itself.
-const TOOLING = /^(scripts|schema|\.github|\.bb)\/|^package(-lock)?\.json$|^scores\.json$/;
+const TOOLING = /^(scripts|schema|stats|\.github|\.bb)\/|^package(-lock)?\.json$|^scores\.json$/;
 
 const { values: opts, positionals } = parseArgs({ options: { base: { type: "string" }, head: { type: "string" } }, allowPositionals: true });
 const file = positionals[0] ?? "hooks-catalog.json";
@@ -63,7 +63,7 @@ function reviewScope(base, head, baseCatalog, headCatalog) {
   for (const key of new Set([...Object.keys(baseCatalog), ...Object.keys(headCatalog)])) {
     if (key === "templates" || isDeepStrictEqual(baseCatalog[key], headCatalog[key])) continue;
     failed ||= key === "name";
-    print(key === "name" ? "FAIL" : "WARN", "docs", `catalog ${key}: ${JSON.stringify(baseCatalog[key])} -> ${JSON.stringify(headCatalog[key])}${key === "name" ? " (breaks every installed <name>/<id> reference)" : " (maintainer-owned)"}`);
+    print(key === "name" ? "FAIL" : "WARN", "docs", `catalog ${key}: ${JSON.stringify(baseCatalog[key])} -> ${JSON.stringify(headCatalog[key])}${key === "name" ? " (breaks every installed <name>/<id> reference and stops install counting)" : " (maintainer-owned)"}`);
   }
   const headIds = new Set(headCatalog.templates.map((t) => t.id));
   for (const t of baseCatalog.templates) if (!headIds.has(t.id)) print("WARN", "docs", `removes template ${t.id}`);
