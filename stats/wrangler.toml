@@ -1,0 +1,20 @@
+name = "bb-hooks-stats"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+CATALOG_NAME = "community"
+CATALOG_URL = "https://raw.githubusercontent.com/MacHatter1/bb-hooks-marketplace/HEAD/hooks-catalog.json"
+# Proof-of-work bits per install (about 0.8 s of CPU for the Hooks plugin at 20).
+DIFFICULTY = "20"
+# Templates one network address can count per day.
+DAILY_LIMIT = "10"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "bb-hooks-stats"
+# From `npx wrangler d1 create bb-hooks-stats`; not a secret (it needs your Cloudflare login to use).
+database_id = "15a659fd-cac1-4789-bf0e-41c9a6a4812a"
+
+[triggers]
+crons = ["17 3 * * *"]
