@@ -62,6 +62,12 @@ const author = (template) => {
   if (!name) return "–";
   return /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(name) ? `[@${name}](https://github.com/${name})` : name;
 };
+// Live install counts from the stats Worker (stats/). Switch on once a Hooks
+// plugin release that reports installs is out; until then every badge says 0.
+const SHOW_INSTALLS = false;
+const COUNTER = "https://bb-hooks-stats.machatter1.workers.dev";
+const installs = (template) =>
+  SHOW_INSTALLS ? ` · ![installs](https://img.shields.io/endpoint?url=${encodeURIComponent(`${COUNTER}/v1/badge/${catalog.name}/${template.id}`)})` : "";
 // Three columns so the table fits the page: the hook cell wraps, and each
 // detail sits on its own small line under the summary.
 const row = (template) => {
@@ -69,7 +75,7 @@ const row = (template) => {
     `**Runs when** ${either(template.events.map((event) => WHEN[event] ?? event))}`,
     setup(template) && `**Setup** ${setup(template)}`,
     requires(template) && `**Requires** ${requires(template)}`,
-    `\`${catalog.name}/${template.id}\`${template.version ? ` v${template.version}` : ""} · by ${author(template)}`,
+    `\`${catalog.name}/${template.id}\`${template.version ? ` v${template.version}` : ""} · by ${author(template)}${installs(template)}`,
   ].filter(Boolean);
   return `| **${template.name}**<br>${template.summary}<br>${details.map((detail) => `<sub>${detail}</sub>`).join("<br>")} | ${score(template, "security")} | ${score(template, "performance")} |`;
 };

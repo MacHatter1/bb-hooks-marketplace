@@ -115,6 +115,11 @@ encrypted.
 
 Gate templates can reject or hold a message before it reaches the agent. Check their matching rules and decision behavior before enabling them.
 
+Install counts for this catalog are opt-in. BB asks before sharing any, then
+sends only the template id and version for each new install from this catalog,
+to [our counter](stats); no settings, secrets or thread data, and nothing about
+other catalogs. Change your answer with `bb hooks marketplace stats on|off`.
+
 ## Catalog format
 
 The catalog is a single `hooks-catalog.json` document served over HTTPS. BB

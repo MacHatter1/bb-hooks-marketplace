@@ -114,11 +114,11 @@ rules aren't scored, but any failure in them means "request changes".
 ## PR rules (not scored; any failure means request changes)
 
 - **Touches only `hooks-catalog.json` and the generated README table.**
-  Changes to `scripts/`, `schema/`, `.github/`, `.bb/`, `package*.json` or
-  `scores.json` can weaken the checks this review relies on, or award the
-  contributor their own score. Score them as a security
-  Critical, and ask for them in a separate PR that a maintainer reviews on
-  its own.
+  Changes to `scripts/`, `schema/`, `stats/`, `.github/`, `.bb/`,
+  `package*.json` or `scores.json` can weaken the checks this review relies
+  on, or award the contributor their own score (`stats/` is the install
+  counter). Score them as a security Critical, and ask for them in a separate
+  PR that a maintainer reviews on its own.
 - **Leaves the catalog `name` alone.** Renaming it breaks every installed
   `community/<id>` reference. Top-level `version`, `homepage` and `author`
   belong to the maintainers, so ask the contributor to revert changes to

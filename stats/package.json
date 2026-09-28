@@ -1,0 +1,16 @@
+{
+  "name": "bb-hooks-stats",
+  "private": true,
+  "type": "module",
+  "description": "Install counter for the BB hooks marketplace (Cloudflare Worker).",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "db:init": "wrangler d1 execute bb-hooks-stats --remote --file schema.sql",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "miniflare": "5.20260926.0-alpha",
+    "wrangler": "^4.142.0"
+  }
+}
