@@ -130,6 +130,6 @@ rules aren't scored, but any failure in them means "request changes".
   promises.
 - **Credits the contributor.** `author` is the PR author's GitHub login, and
   `version` is set (new templates start at 1.0.0).
-- **The PR is complete.** Its checklist is ticked, CI (`npm run validate`)
-  is green, and every new template has a README row (the inspector checks
-  this).
+- **The PR is complete.** Its checklist is ticked, `npm run validate` passes
+  on the PR's catalog (there is no CI, so run it yourself), and every new
+  template has a README row (the inspector checks this).

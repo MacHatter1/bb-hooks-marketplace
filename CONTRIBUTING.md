@@ -24,8 +24,9 @@
    bb hooks test <hook-id>
    ```
 
-7. Open a pull request. CI runs `npm run validate`; a reviewer checks that
-   the template does what its summary says and nothing else.
+7. Open a pull request. Nothing runs automatically on GitHub, so a reviewer
+   runs `npm run validate` themselves and checks that the template does what
+   its summary says and nothing else.
 
 Templates that download and execute remote code, hide what they run, or
 exfiltrate data will not be merged.
