@@ -10,6 +10,10 @@ with that user's rights. Trust is the whole product.
   encrypted by BB and never written into a hook.
 - No template downloads and executes remote code, obscures what it runs, or
   sends data anywhere except the service its listing names.
+- Install counts are opt-in and separate from templates: BB asks before
+  sending anything, and a count is only the template id and version of an
+  install from this catalog. The counter never stores network addresses, only
+  salted hashes deleted after a day. See [`stats/`](stats).
 - Every change is validated by `scripts/validate.mjs` and reviewed by a
   code owner before it reaches `main`.
 
