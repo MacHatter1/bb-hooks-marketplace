@@ -62,9 +62,9 @@ const author = (template) => {
   if (!name) return "–";
   return /^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38})$/.test(name) ? `[@${name}](https://github.com/${name})` : name;
 };
-// Live install counts from the stats Worker (stats/). Switch on once a Hooks
-// plugin release that reports installs is out; until then every badge says 0.
-const SHOW_INSTALLS = false;
+// Live install counts from the stats Worker (stats/). Switched on now that the Hooks
+// plugin release that reports installs (0.4.0) is out.
+const SHOW_INSTALLS = true;
 const COUNTER = "https://bb-hooks-stats.machatter1.workers.dev";
 const installs = (template) =>
   SHOW_INSTALLS ? ` · ![installs](https://img.shields.io/endpoint?url=${encodeURIComponent(`${COUNTER}/v1/badge/${catalog.name}/${template.id}`)})` : "";
