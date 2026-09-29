@@ -1,6 +1,8 @@
 # Catalog format reference
 
 `hooks-catalog.json` is a JSON document describing a catalog and its templates.
+Our Hooks plugin for BB reads it (version 0.3.0 or later; see the
+[README](../README.md#requirements)).
 The [JSON Schema](../schema/hooks-catalog.schema.json) is the source of truth for
 validation; run `npm run validate` after editing the catalog.
 

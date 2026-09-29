@@ -6,7 +6,8 @@
 
 <p align="center">
   Ready-made hooks for <a href="https://github.com/get-bb/bb">BB</a> agents: notifications, integrations, automation, and gate policies.<br>
-  Browse them on BB's <strong>Hooks</strong> page and install with one click, or with one command.
+  Browse them on BB's <strong>Hooks</strong> page and install with one click, or with one command.<br>
+  Needs our <strong>Hooks plugin</strong> for BB: see <a href="#requirements">Requirements</a>.
 </p>
 
 <p align="center">
@@ -14,6 +15,22 @@
 <img alt="templates: 24" src="https://img.shields.io/badge/templates-24-6d5cff?style=flat-square"> <img alt="reacts: 20" src="https://img.shields.io/badge/reacts-20-3b82f6?style=flat-square"> <img alt="gates: 4" src="https://img.shields.io/badge/gates-4-ef4444?style=flat-square"> <img alt="catalog: v1.1.0" src="https://img.shields.io/badge/catalog-v1.1.0-10b981?style=flat-square"> <img alt="license: MIT" src="https://img.shields.io/badge/license-MIT-8b5cf6?style=flat-square">
 <!-- stats:end -->
 </p>
+
+## Requirements
+
+This catalog is only a list of templates. BB installs and runs them through
+our **Hooks plugin**, which provides the **Hooks** page and the `bb hooks`
+commands used below, so install it first.
+
+- **BB 0.43 or later**, and **Hooks plugin 0.3.0 or later**. Older plugin
+  versions reject this catalog. Opt-in install counts need **0.4.0 or later**.
+- Install the plugin, then check that `hooks` shows as running in
+  `bb plugin list`:
+
+  ```sh
+  bb plugin install git:https://github.com/MacHatter1/bb-plugin-hooks --yes
+  bb plugin list
+  ```
 
 ## Add this catalog
 
