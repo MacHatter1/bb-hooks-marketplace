@@ -38,7 +38,7 @@ any that are stale (the template changed after scoring) or unscored.
 ## Procedure
 
 1. Get the PR:
-   - `gh pr view <n> --json title,author,body,files,statusCheckRollup`
+   - `gh pr view <n> --json title,author,body,files`
    - `git fetch origin pull/<n>/head:pr-<n>`
 2. From this workspace (main's copy), run the inspector:
    `node .bb/skills/review-hook/scripts/inspect.mjs --base origin/main --head pr-<n>`.

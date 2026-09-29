@@ -14,8 +14,9 @@ with that user's rights. Trust is the whole product.
   asks before sending anything, and a count is only the template id and
   version of an install from this catalog. The counter never stores network addresses, only
   salted hashes deleted after a day. See [`stats/`](stats).
-- Every change is validated by `scripts/validate.mjs` and reviewed by a
-  code owner before it reaches `main`.
+- Every change is checked with `scripts/validate.mjs` and reviewed by a code
+  owner before it reaches `main`. Both are done by hand: no GitHub Actions
+  workflow runs on this repository.
 
 ## Reporting a template that misbehaves
 
