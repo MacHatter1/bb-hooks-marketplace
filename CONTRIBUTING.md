@@ -1,5 +1,8 @@
 # Contributing a hook template
 
+You need BB with our Hooks plugin installed to test a template (see
+[Requirements](README.md#requirements)).
+
 1. Copy an existing entry in `hooks-catalog.json` that is closest to yours.
 2. Give it a unique kebab-case `id`, a clear `name` and one-sentence `summary`,
    `tags` so people can find it, and your GitHub login as `author` (with a
