@@ -140,9 +140,9 @@
         "bb= is only set inside the if branch; when the payload check matches, \"$bb\" thread tell runs as \"\" and exits 127.",
         "Sends a \"continue\" message instead of bb thread retry, which resumes the failed turn properly."
       ],
-      "version": "1.0.0",
-      "reviewed": "2026-09-28",
-      "hash": "7ae8caf8919376f6"
+      "version": "1.0.1",
+      "reviewed": "2026-09-30",
+      "hash": "2415fe084d1f8a46"
     },
     "block-secrets": {
       "security": 75,
