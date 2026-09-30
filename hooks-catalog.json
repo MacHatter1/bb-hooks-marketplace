@@ -308,9 +308,9 @@
         "resilience"
       ],
       "author": "MacHatter1",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "params": [],
-      "command": "needle='Error Code null: The model is currently at capacity due to high demand.'\nif ! jq -e --arg needle \"$needle\" 'any(.. | strings; contains($needle))' >/dev/null; then\n  bb=\"${BB_CLI:-bb}\"\n  \"$bb\" thread log \"$BB_THREAD_ID\" --json --all 2>/dev/null |\n    jq -e --arg needle \"$needle\" '[.[] | select(.type == \"provider/error\")] | last // {} | any(.. | strings; contains($needle))' >/dev/null || exit 0\nfi\nstamp=\"${TMPDIR:-/tmp}/bb-capacity-continue-${BB_THREAD_ID}\"\nnow=$(date +%s)\nlast=$(cat \"$stamp\" 2>/dev/null || echo 0)\nif ! [ \"$last\" -ge 0 ] 2>/dev/null; then last=0; fi\nif [ \"$((now - last))\" -lt 120 ]; then exit 0; fi\nprintf \"%s\\n\" \"$now\" > \"$stamp\"\n\"$bb\" thread tell \"$BB_THREAD_ID\" \"Continue from where you left off. The previous attempt hit temporary model capacity; do not repeat completed work.\"",
+      "command": "needle='The model is currently at capacity due to high demand'\nif ! jq -e --arg needle \"$needle\" 'any(.. | strings; contains($needle))' >/dev/null; then\n  bb=\"${BB_CLI:-bb}\"\n  \"$bb\" thread log \"$BB_THREAD_ID\" --json --all 2>/dev/null |\n    jq -e --arg needle \"$needle\" '[.[] | select(.type == \"provider/error\")] | last // {} | any(.. | strings; contains($needle))' >/dev/null || exit 0\nfi\nstamp=\"${TMPDIR:-/tmp}/bb-capacity-continue-${BB_THREAD_ID}\"\nnow=$(date +%s)\nlast=$(cat \"$stamp\" 2>/dev/null || echo 0)\nif ! [ \"$last\" -ge 0 ] 2>/dev/null; then last=0; fi\nif [ \"$((now - last))\" -lt 120 ]; then exit 0; fi\nprintf \"%s\\n\" \"$now\" > \"$stamp\"\n\"$bb\" thread tell \"$BB_THREAD_ID\" \"Continue from where you left off. The previous attempt hit temporary model capacity; do not repeat completed work.\"",
       "timeoutMs": 30000,
       "notes": "Needs jq and the bb CLI on the machine running the BB server. Checks the latest provider/error log entry when the event omits details.",
       "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace"
