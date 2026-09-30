@@ -42,7 +42,7 @@ bb hooks use community/pagerduty --set routingKey=… --yes
 
 Or in BB: **Hooks → Sources → Add** `MacHatter1/bb-hooks-marketplace`, then
 install from the **Marketplace** tab. Pin a release with
-`MacHatter1/bb-hooks-marketplace@v1.1.0`.
+`MacHatter1/bb-hooks-marketplace@v1.1.1`.
 
 ## Browse templates
 

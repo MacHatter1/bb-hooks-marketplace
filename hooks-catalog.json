@@ -2,7 +2,7 @@
   "$schema": "./schema/hooks-catalog.schema.json",
   "name": "community",
   "description": "Community hook templates for the BB Hooks plugin: notifications, integrations, agent automation, and gate policies.",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "homepage": "https://github.com/MacHatter1/bb-hooks-marketplace",
   "author": "MacHatter1",
   "templates": [
